@@ -2,11 +2,14 @@ let storedValue="";
 let displayText = "";
 let operator = "";
 
+let operandOne = "";
+let operandTwo = "";
 window.addEventListener("load", ()=>{
     const display = document.querySelector(".display");
     const calcButtons = document.querySelectorAll(".calcButton");
     const acButton = document.querySelector(".acButton")
     const operatorButton = document.querySelectorAll(".operatorButton")
+    const equalButton = document.querySelector(".equalButton")
     for(let button of calcButtons){
         button.addEventListener('click', ()=>{
             storedValue+=button.textContent
@@ -22,10 +25,25 @@ window.addEventListener("load", ()=>{
     }
     for(let button of operatorButton){
         button.addEventListener('click', ()=>{
-
+            //Okay, so we want to display the entire string and everything, but if we mess around with stored value and shit by clearing it, it will mess up the acButton
+            //What we should just do is have one giant ass string, when we click an operator button, just add the operator to the long ass string
+            //Base cases for the operators
+            /*
+            There's already an operator, change it
+            there isn't an operator, append
+             */
+            //Then for negative cases:
+            /*
+            1. long ass string is empty, add the negative to the string
+            2. Check the string at the end, if it's already a negative operator, don't do anything
+                if it isn't a negative operator, append          
+            
+            */
+            
+            
+            
         })
     }
-
     //AC removes the last character
     acButton.addEventListener('click', ()=>{
         if(display.innerText==="Clear"){
@@ -33,7 +51,6 @@ window.addEventListener("load", ()=>{
         }
         //.slice(0,-1) remove the last character (Function of AC)
         storedValue=storedValue.slice(0,-1)
-        
         //Just reset the displayText, then shrink it until it fits the screen 
         displayText = storedValue;
         display.textContent = displayText
@@ -41,14 +58,12 @@ window.addEventListener("load", ()=>{
             displayText = displayText.slice(1)
             display.textContent = displayText
         }
-
         //Check if it's empty 
         if(displayText.length==0){
             displayText = ""
             display.textContent="Clear"
         }
     })
-    
 });
 
 function add(a,b){
