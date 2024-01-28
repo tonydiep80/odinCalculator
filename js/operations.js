@@ -37,7 +37,16 @@ window.addEventListener("load", ()=>{
             1. long ass string is empty, add the negative to the string
             2. Check the string at the end, if it's already a negative operator, don't do anything
                 if it isn't a negative operator, append          
+            Gotta do PEMDAS
             
+            Splice the strings based on the operators
+            Check the newly created array for these operators first
+            Check the index before and after to do calculations
+            Special case negatives again 
+            If it's a negative operator, check the index before,
+            If it's empty, then the number after is a negative number
+            If it's not empty, is it another operator? Then the number after is negative 
+            If it's not an operator, it has to be a number, then do normal subraction 
             */
             
             
