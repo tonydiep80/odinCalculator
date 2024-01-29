@@ -4,8 +4,10 @@ let operator = "";
 
 let operandOne = "";
 let operandTwo = "";
+let display;
+
 window.addEventListener("load", ()=>{
-    const display = document.querySelector(".display");
+    display = document.querySelector(".display");
     const calcButtons = document.querySelectorAll(".calcButton");
     const acButton = document.querySelector(".acButton")
     const operatorButton = document.querySelectorAll(".operatorButton")
@@ -48,9 +50,43 @@ window.addEventListener("load", ()=>{
             If it's not empty, is it another operator? Then the number after is negative 
             If it's not an operator, it has to be a number, then do normal subraction 
             */
+            const operators = ["/", "X", "+"]
+            if(button.innerText == "-"){
+                //Need to have a base case, otherwise the check for length would be out of bounds 
+                if(storedValue.length === 0){
+                    storedValue+= button.innerText;
+                }
+                else if(storedValue[storedValue.length-1] === "-"){
+                    return;
+                }
+                else{
+                    storedValue+= button.innerText;
+                }
+            }
+            //Normal operators 
+            else{
+                //If length is 0 or if the first sign is negative, skip 
+                if(storedValue.length === 0 || (storedValue.length == 1 && storedValue[0] === "-")){
+                    return;
+                }
+                if(storedValue[storedValue.length-1]=="-"){
+                    //If it's something like +-, we want to return immedieatly so nothing can be changed. 
+                    if (operators.includes(storedValue[storedValue.length-2])){
+                        return; 
+                    }
+                    //The negative sign is by itself, so now it can be replaced 
+                    storedValue=storedValue.slice(0,-1)
+                }
+                //If there's already an operator remove it so it can be replaced 
+                if(operators.includes(storedValue[storedValue.length-1])){
+                    storedValue=storedValue.slice(0,-1)
+                }
+                
+                storedValue+= button.innerText
+           }
             
             
-            
+            updateDisplay();
         })
     }
     //AC removes the last character
@@ -60,21 +96,25 @@ window.addEventListener("load", ()=>{
         }
         //.slice(0,-1) remove the last character (Function of AC)
         storedValue=storedValue.slice(0,-1)
+        updateDisplay();
         //Just reset the displayText, then shrink it until it fits the screen 
-        displayText = storedValue;
-        display.textContent = displayText
-        while(display.scrollWidth > display.clientWidth) {
-            displayText = displayText.slice(1)
-            display.textContent = displayText
-        }
-        //Check if it's empty 
-        if(displayText.length==0){
-            displayText = ""
-            display.textContent="Clear"
-        }
+        
     })
 });
 
+function updateDisplay(){
+    displayText = storedValue;
+    display.textContent = displayText
+    while(display.scrollWidth > display.clientWidth) {
+        displayText = displayText.slice(1)
+        display.textContent = displayText
+    }
+    //Check if it's empty 
+    if(displayText.length==0){
+        displayText = ""
+        display.textContent="Clear"
+    }
+}
 function add(a,b){
     return a+b;
 }
