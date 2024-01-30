@@ -27,29 +27,6 @@ window.addEventListener("load", ()=>{
     }
     for(let button of operatorButton){
         button.addEventListener('click', ()=>{
-            //Okay, so we want to display the entire string and everything, but if we mess around with stored value and shit by clearing it, it will mess up the acButton
-            //What we should just do is have one giant ass string, when we click an operator button, just add the operator to the long ass string
-            //Base cases for the operators
-            /*
-            There's already an operator, change it
-            there isn't an operator, append
-             */
-            //Then for negative cases:
-            /*
-            1. long ass string is empty, add the negative to the string
-            2. Check the string at the end, if it's already a negative operator, don't do anything
-                if it isn't a negative operator, append          
-            Gotta do PEMDAS
-            
-            Splice the strings based on the operators
-            Check the newly created array for these operators first
-            Check the index before and after to do calculations
-            Special case negatives again 
-            If it's a negative operator, check the index before,
-            If it's empty, then the number after is a negative number
-            If it's not empty, is it another operator? Then the number after is negative 
-            If it's not an operator, it has to be a number, then do normal subraction 
-            */
             const operators = ["/", "X", "+"]
             if(button.innerText == "-"){
                 //Need to have a base case, otherwise the check for length would be out of bounds 
@@ -97,10 +74,70 @@ window.addEventListener("load", ()=>{
         //.slice(0,-1) remove the last character (Function of AC)
         storedValue=storedValue.slice(0,-1)
         updateDisplay();
-        //Just reset the displayText, then shrink it until it fits the screen 
-        
+        //Just reset the displayText, then shrink it until it fits the screen  
+    })
+    equalButton.addEventListener('click',()=>{
+        const delimiters = /[+\-\/X]/;
+        let operands = storedValue.split(delimiters)
+        operands = operands.filter(number => number != "") //get rid of empty 
+
+        //Need to have at least two operands to calculate a result 
+        if(operands.length < 2){
+            return;
+        }
+
+        tokenAssessor();
+
+
     })
 });
+
+function tokenAssessor(){
+    let calculatedOnce = false;
+    const operators = ["/", "X", "+", "-"]
+    let number1 = ""
+    let number2 = ""
+    let operand = ""
+    for(let i = 0; i < storedValue.length; i++){
+        //Example: 1+2-, we must calculate the 1+2 before we update the operand
+        //However, if it's something like 1+-, we don't want to operate because that simply means the second number is negative
+        //We shouldn't need to worry about ++ // xx +x etc, because I solved it earlier 
+        if(operators.includes(storedValue[i]) && operand.length > 0 && number2.length >0){
+            number1 = String(operate(Number(number1), Number(number2),operand))
+            number2 = ""
+            operand = ""
+            calculatedOnce = true; 
+        }
+        if(storedValue[i] == "-"){
+            if(i==0){
+                number1+="-"
+            }
+            //If there's an operator before this negative sign, then that must mean the second number is negative
+            else if(operators.includes(storedValue[i-1])){
+                number2+="-"
+            }
+            else{
+                operand = "-"
+            }
+        }
+        else if(operators.includes(storedValue[i])){
+            operand = storedValue[i]
+        }
+        else if(operand.length!=0 || calculatedOnce){
+            number2+=storedValue[i]
+        }
+        else{
+            number1+=storedValue[i]
+        }
+    }
+    if(number2.length>0){
+        number1 = String(operate(Number(number1), Number(number2),operand))
+        number2 = ""
+        operand = ""
+    }
+    storedValue = number1
+    updateDisplay();
+}
 
 function updateDisplay(){
     displayText = storedValue;
@@ -140,7 +177,7 @@ function operate(input1, input2, operator){
         return add(input1,input2)
     if(operator==="-")
         return subtract(input1,input2)
-    if(operator==="x")
+    if(operator==="X")
         return multiply(input1,input2)
     if(operator==="/")
         return divide(input1, input2)
