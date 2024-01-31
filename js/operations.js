@@ -85,13 +85,60 @@ window.addEventListener("load", ()=>{
         if(operands.length < 2){
             return;
         }
-
-        tokenAssessor();
+        pemdasAssessor();
+        //tokenAssessor();
 
 
     })
 });
+function pemdasAssessor(){
+    let tokens = []
+    const operators = ["/", "X", "+", "-"]
+    let number = ""
+    for(let i = 0; i < storedValue.length; i++){
+        if(operators.includes(storedValue[i])){
+            //If it's a negative operator && if it's the first index, the number must be negative.
+            //If it's not the first index, check the position before it. Is it also a sign? Then this incoming number must be negative
+            if(storedValue[i] == "-" && (i==0 || operators.includes(storedValue[i-1]))){
+                number+="-"
+            }
+            else{
+                tokens.push(number)
+                tokens.push(storedValue[i])
+                number = ""
+            }
+        }
+        else{
+            number+=storedValue[i]
+        }
+    }
+    if(number.length > 0){
+        tokens.push(number)
+    }
+    //console.log(tokens)
 
+    while(tokens.length > 1){
+        for(let i = 0; i < tokens.length; i++){
+            let index;
+            let output;
+            
+            if((index = tokens.indexOf("/")) >= 0 || (index = tokens.indexOf("X")) >= 0){
+                output = String(operate(Number(tokens[index-1]), Number(tokens[index+1]), tokens[index]))
+                tokens.splice(index-1, 3, output)
+                break; //Break because the length has been updated
+            }
+            else if((index = tokens.indexOf("+")) >= 0 || (index = tokens.indexOf("-")) >= 0){
+                output = String(operate(Number(tokens[index-1]), Number(tokens[index+1]), tokens[index]))
+                tokens.splice(index-1, 3, output)
+                break; //Break because the length has been updated
+            }
+        }
+    }
+    //console.log("Result: " + tokens[0])
+    storedValue=tokens[0]
+    updateDisplay()
+
+}
 function tokenAssessor(){
     let calculatedOnce = false;
     const operators = ["/", "X", "+", "-"]
