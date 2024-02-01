@@ -102,6 +102,10 @@ function pemdasAssessor(){
             if(storedValue[i] == "-" && (i==0 || operators.includes(storedValue[i-1]))){
                 number+="-"
             }
+            //Accounting for exponential notation
+            else if((storedValue[i] == "+" && storedValue[i-1] == "e") || (storedValue[i] == "-" && storedValue[i-1] == "e")){
+                number+=storedValue[i]
+            }
             else{
                 tokens.push(number)
                 tokens.push(storedValue[i])
@@ -136,6 +140,9 @@ function pemdasAssessor(){
     }
     //console.log("Result: " + tokens[0])
     storedValue=tokens[0]
+    if(storedValue.length > 10){
+        storedValue = Number(storedValue).toExponential(5)
+    }
     updateDisplay()
 
 }
@@ -183,6 +190,9 @@ function tokenAssessor(){
         operand = ""
     }
     storedValue = number1
+    if(storedValue.length > 10){
+        storedValue = Number(storedValue).toExponential(5)
+    }
     updateDisplay();
 }
 
